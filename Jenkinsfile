@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    // 🔥 THIS ENABLES AUTO BUILD ON GIT PUSH
+    triggers {
+        githubPush()
+    }
+
     environment {
         IMAGE_NAME = "vijayarangan2002/myapp"
         IMAGE_TAG  = "${BUILD_NUMBER}"
@@ -42,7 +47,7 @@ pipeline {
                 sed -i "s|image:.*|image: ${IMAGE_NAME}:${IMAGE_TAG}|g" deployment.yaml
 
                 git add deployment.yaml
-                git commit -m "Update image to ${IMAGE_NAME}:${IMAGE_TAG}"
+                git commit -m "Update image to ${IMAGE_NAME}:${IMAGE_TAG}" || echo "No changes to commit"
 
                 git push https://${GIT_CREDS_USR}:${GIT_CREDS_PSW}@github.com/vijayancr/myapp-k8s.git
                 '''
